@@ -8,6 +8,14 @@ grade: stable
 confinement: strict
 base: core20
 
+architectures:
+  - build-on: amd64
+    build-for: amd64
+  - build-on: arm64
+    build-for: arm64
+  - build-on: armhf
+    build-for: armhf
+
 parts:
   ncpa:
     source: https://github.com/NagiosEnterprises/ncpa/archive/v2.4.1.tar.gz
@@ -30,3 +38,19 @@ apps:
       - network
       - network-bind
       - process-control
+
+  ncpa-config:
+    command: bin/ncpa-config --config $SNAP_DATA/etc/ncpa.cfg
+    plugs:
+      - network
+
+  ncpa-listen:
+    command: bin/ncpa-passive-listen --config $SNAP_DATA/etc/ncpa.cfg
+    plugs:
+      - network
+      - network-bind
+
+  ncpa-plugins:
+    command: bin/ncpa-plugins --config $SNAP_DATA/etc/ncpa.cfg
+    plugs:
+      - network
