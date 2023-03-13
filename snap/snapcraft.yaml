@@ -1,43 +1,21 @@
 name: ncpa
+version: '2.4.1'
 summary: Nagios Cross-Platform Agent
 description: |
-  The Nagios Cross-Platform Agent; a single monitoring agent that installs on all major operating systems.
-  NCPA allows both active checks via check_ncpa.py and passive checks via NRDP.
-  NCPA comes with a built-in web GUI, documentation, websocket graphing, and is secured with SSL by default.
-adopt-info: ncpa
-confinement: strict
+  NCPA (Nagios Cross-Platform Agent) is an open-source monitoring agent that provides performance metrics, system data, and remote access capabilities to Nagios XI, Nagios Core, and other monitoring solutions.
+
 grade: stable
-base: core18
-
-apps:
-  listener:
-    command: usr/sbin/ncpalistener
-    daemon: simple
-    plugs:
-      - network
-      - network-bind
-
-  passive:
-    command: usr/sbin/ncpapassive
-    daemon: simple
-    plugs:
-      - network
-      - network-bind
+confinement: strict
 
 parts:
   ncpa:
-    plugin: dump
-    source: https://github.com/NagiosEnterprises/ncpa
-    source-type: git
+    source: https://github.com/NagiosEnterprises/ncpa/archive/v2.4.1.tar.gz
+    plugin: python
+    python-version: python3
     stage-packages:
-      - python3.8
-      - python3-openssl
-      - python3-pycryptodome
-      - python3-setuptools
-    build-packages:
-      - git
+      - python3-pip
+    after:
+      - python3
     override-build: |
-      ./ncpa/build/build.sh
-      make build_deb
-      # Grab the version string from the newly-compiled binary.
-      snapcraftctl set-version "$(ncpa -v)"
+      snapcraftctl build
+      pip3 install -r $SNAPCRAFT_PART_BUILD/requirements.txt -t $SNAPCRAFT_PART_INSTALL
