@@ -20,3 +20,13 @@ parts:
     override-build: |
       snapcraftctl build
       pip3 install -r $SNAPCRAFT_PART_BUILD/requirements.txt -t $SNAPCRAFT_PART_INSTALL
+
+apps:
+  ncpa-server:
+    command: bin/ncpa_passive.py --config $SNAP_DATA/etc/ncpa.cfg
+    daemon: simple
+    restart-condition: on-failure
+    plugs:
+      - network
+      - network-bind
+      - process-control
